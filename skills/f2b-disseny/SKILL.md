@@ -9,10 +9,16 @@ Per què: a Bona Tria vam dissenyar pàgina a pàgina (pas 7 del PDF) i vam have
 
 Sortida: `disseny/sistema.md`, tokens a `lloc.yaml → disseny`, i (si cal) components propis a `tema/`.
 
-## 1. Direcció visual
-- Proposa **2 direccions** contrastades a partir del to de veu del pas 1 (ex.: «tècnica i clara» vs «càlida i propera»). Per a cadascuna: paleta (5–6 colors amb ús), parella tipogràfica (Google Fonts, una per a títols i una per a text), forma (radis, línies, ombres), tipus d'imatge.
-- Mostra-les sobre una pàgina real del projecte: construeix la web amb cada joc de tokens i fes captures (mòbil i escriptori).
-- El propietari en tria una. Anota-la a `disseny/sistema.md`.
+## 1. Direcció visual (amb la skill frontend-design)
+Si la skill **frontend-design** està disponible (plugin `frontend-design` d'Anthropic), carrega-la abans de proposar res i segueix el seu procés: pla → revisió contra el brief → construcció → autocrítica amb captures. Si no hi és, aplica aquests mateixos principis:
+- **La direcció surt del tema del projecte**: sector, materials, vocabulari i públic (pas 1). Un directori de detectius i una marca personal de consultoria no s'han d'assemblar.
+- Proposa **2 direccions** contrastades. Per a cadascuna: paleta de 4–6 colors amb nom i ús, 1–2 famílies tipogràfiques clarament diferents (Google Fonts) amb la seva escala, concepte de maquetació amb un esquema ASCII, i 2–3 principis.
+- **Revisa-les contra els tòpics** abans de construir: fons crema amb serif i accent terracota; fons negre amb un sol accent àcid; maquetació de diari amb filets; kit de targetes SaaS amb ombres i degradats; etiquetes en majúscules sobre cada títol, separadors «·» i fletxes «→» a tots els botons. Si una direcció hi cau sense motiu, canvia-la i explica per què.
+- **Una sola cosa memorable** (l'H1, la resposta ràpida, una il·lustració, una eina) i tota la resta tranquil·la.
+- Construeix la mateixa pàgina real amb cada direcció (tokens a `lloc.yaml`, i CSS propi a `tema/assets/` si cal), fes captures a mòbil i escriptori, i critica-les abans d'ensenyar-les.
+- El propietari en tria una. Anota-la a `disseny/sistema.md` amb el pla complet i el que s'ha descartat.
+
+El tema base (`temes/base`) és el punt de partida neutre: grotesca per als títols i la interfície, serif per a la lectura, index lateral, targetes planes i directori en files. Per a un projecte amb personalitat pròpia, sobreescriu-ne els tokens i, si cal, afegeix `tema/assets/projecte.css` (amb `css_extra: /assets/projecte.css` a `lloc.yaml`).
 
 ## 2. Tokens (`lloc.yaml → disseny`)
 `color_text`, `color_fons`, `color_suau`, `color_primari`, `color_accent`, `color_linia`, `font_titols`, `font_text`, `google_fonts`, `radi`, `amplada`. El generador els escriu a `assets/tokens.css`.

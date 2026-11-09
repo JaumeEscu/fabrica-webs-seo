@@ -171,6 +171,8 @@ class Lloc:
     # --- markdown i components
     def markdown(self, text, pagina):
         text = RE_ENLLAC_MD.sub(lambda m: "](" + self.url_clau(m.group(1), pagina["idioma"], pagina["font"]) + (m.group(2) or "") + ")", text)
+        # una llista just després d'un paràgraf (sense línia en blanc) també ha de ser llista
+        text = re.sub(r"(?m)^(?![ \t]*(?:[-*+]|\d+\.)\s)(?![ \t]*$)(?!\|)(.+)\n(?=[ \t]*(?:[-*+]|\d+\.)\s)", r"\1\n\n", text)
         md = markdown.Markdown(extensions=["tables", "attr_list", "md_in_html", "sane_lists", "toc"],
                                extension_configs={"toc": {"slugify": slugify_unicode, "permalink": False}})
         return md.convert(text)
@@ -429,6 +431,8 @@ class Lloc:
         autors = self.cfg.get("autors") or {}
         ctx = {
             "lloc": self.cfg, "p": p, "idioma": idioma, "cos": cos, "faq": faq, "relacionades": relacionades,
+            "index": [] if p.get("index") is False else [
+                {"id": m.group(1), "text": text_pla(m.group(2))} for m in re.finditer(r'<h2 id="([^"]+)">(.*?)</h2>', cos, re.S)],
             "titol": p.get("titol") or p.get("h1"), "descripcio": p.get("descripcio", ""),
             "canonical": self.absoluta(p["url"]), "alternatives": self.alternatives(p),
             "schema": self.schema(p), "molles": self.molles(p), "menu": self.menu(self.cfg.get("menu"), idioma),

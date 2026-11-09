@@ -20,24 +20,38 @@
       {% endif %}
     </div>
   </header>
-  <div class="amplada cos">
-    {{ cos }}
-  </div>
-  {% if faq %}
-  <section class="faq amplada" id="faq">
-    <h2>{{ p.titol_faq or {'ca': 'Preguntes freqüents', 'es': 'Preguntas frecuentes', 'en': 'Frequently asked questions'}[idioma] }}</h2>
-    {% for f in faq %}
-    <details{% if loop.first %} open{% endif %}><summary>{{ f.p }}</summary><div>{{ f.r }}</div></details>
-    {% endfor %}
-  </section>
-  {% endif %}
-  {% if relacionades %}
-  <nav class="relacionades amplada" aria-label="{{ {'ca': 'També et pot interessar', 'es': 'También te puede interesar', 'en': 'Related'}[idioma] }}">
-    <h2>{{ {'ca': 'També et pot interessar', 'es': 'También te puede interesar', 'en': 'Related'}[idioma] }}</h2>
-    <div class="graella">
-    {% for r in relacionades %}<a class="targeta targeta--enllac" href="{{ r.url }}"><strong>{{ r.titol }}</strong>{% if r.descripcio %}<span>{{ r.descripcio }}</span>{% endif %}</a>{% endfor %}
+  <div class="amplada disposicio{% if index|length >= 3 %} disposicio--amb-index{% endif %}">
+    <div class="columna">
+      <div class="cos">
+        {{ cos }}
+      </div>
+      {% if faq %}
+      <section class="faq" id="faq">
+        <h2>{{ p.titol_faq or {'ca': 'Preguntes freqüents', 'es': 'Preguntas frecuentes', 'en': 'Frequently asked questions'}[idioma] }}</h2>
+        {% for f in faq %}
+        <details><summary>{{ f.p }}</summary><div>{{ f.r }}</div></details>
+        {% endfor %}
+      </section>
+      {% endif %}
+      {% if relacionades %}
+      <nav class="relacionades" aria-labelledby="relacionades-titol">
+        <h2 id="relacionades-titol">{{ {'ca': 'També et pot interessar', 'es': 'También te puede interesar', 'en': 'Related'}[idioma] }}</h2>
+        <div class="graella">
+        {% for r in relacionades %}<a class="targeta targeta--enllac" href="{{ r.url }}"><strong>{{ r.titol }}</strong>{% if r.descripcio %}<span>{{ r.descripcio }}</span>{% endif %}</a>{% endfor %}
+        </div>
+      </nav>
+      {% endif %}
     </div>
-  </nav>
-  {% endif %}
+    {% if index|length >= 3 %}
+    <aside class="index" aria-labelledby="index-titol">
+      <p class="index__titol" id="index-titol">{{ {'ca': 'En aquesta pàgina', 'es': 'En esta página', 'en': 'On this page'}[idioma] }}</p>
+      <ol>
+        {% for h in index %}<li><a href="#{{ h.id }}">{{ h.text }}</a></li>{% endfor %}
+        {% if faq %}<li><a href="#faq">{{ p.titol_faq or {'ca': 'Preguntes freqüents', 'es': 'Preguntas frecuentes', 'en': 'Frequently asked questions'}[idioma] }}</a></li>{% endif %}
+      </ol>
+      {% if cta and cta.url %}<a class="boto boto--petit" href="{{ cta.url }}">{{ cta.text }}</a>{% endif %}
+    </aside>
+    {% endif %}
+  </div>
 </article>
 {% endblock %}
