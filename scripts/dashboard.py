@@ -131,7 +131,7 @@ def pagina(projectes):
     ordre = {"actiu": 0, "publicat": 1, "pausa": 2, "arxivat": 3}
     targetes = "".join(render(p) for p in sorted(projectes, key=lambda p: (ordre.get(p["estat"], 9), p["nom"])))
     ara = dt.datetime.now().strftime("%Y-%m-%d %H:%M")
-    return f"""<!doctype html><html lang="ca"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+    return f"""<!DOCTYPE html><html lang="ca"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Projectes web · Dashboard</title><meta name="robots" content="noindex">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,650&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>{CSS}</style></head><body>
@@ -152,7 +152,7 @@ def render(p):
     pendents = "".join(f"<li>{e(x)}</li>" for x in p["pendents"][:5])
     bloquejos = "".join(f"<li>{e(x)}</li>" for x in p["bloquejos"][:3])
     enllacos = " · ".join(f'<a href="{e(v)}">{e(k)}</a>' for k, v in p["enllacos"].items())
-    domini = f' · <a href="https://{e(p["domini"])}">{e(p["domini"])}</a>' if p["domini"] else ""
+    domini = f' · <a href="https://{e(p["domini"])}">{e(p["domini"])}</a>' if p["domini"] and "[" not in p["domini"] else ""
     volum = f'{p["volum"]:,}'.replace(",", ".")
     return f"""
 <article class="proj" data-estat="{e(p["estat"])}">
