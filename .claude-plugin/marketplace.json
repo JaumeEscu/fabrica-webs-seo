@@ -1,0 +1,11 @@
+{
+  "name": "fabrica-webs-seo",
+  "owner": { "name": "Jaume Esteban" },
+  "plugins": [
+    {
+      "name": "fabrica-webs-seo",
+      "source": "./",
+      "description": "Sistema reutilitzable per crear webs SEO: fases, generador, directori i dashboard de projectes."
+    }
+  ]
+}

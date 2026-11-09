@@ -1,0 +1,6 @@
+<div class="graella{% if at.columnes %} graella--{{ at.columnes }}{% endif %}">
+{% for t in targetes %}
+  {% if t.enllac %}<a class="targeta targeta--enllac" href="{{ t.enllac }}"><h3>{{ t.titol }}</h3>{{ t.html }}</a>
+  {% else %}<div class="targeta"><h3>{{ t.titol }}</h3>{{ t.html }}</div>{% endif %}
+{% endfor %}
+</div>

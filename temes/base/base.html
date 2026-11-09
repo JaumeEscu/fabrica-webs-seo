@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="{{ idioma }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ titol|esc }}</title>
+{% if descripcio %}<meta name="description" content="{{ descripcio|esc }}">{% endif %}
+{% if p.noindex %}<meta name="robots" content="noindex, follow">{% else %}<meta name="robots" content="index, follow, max-image-preview:large">{% endif %}
+{% if canonical %}<link rel="canonical" href="{{ canonical }}">{% endif %}
+{% for a in alternatives %}<link rel="alternate" hreflang="{{ a.idioma }}" href="{{ a.url }}">
+{% endfor %}
+<meta property="og:type" content="{{ 'article' if p.tipus in ['guia', 'article'] else 'website' }}">
+<meta property="og:site_name" content="{{ lloc.nom|esc }}">
+<meta property="og:title" content="{{ titol|esc }}">
+{% if descripcio %}<meta property="og:description" content="{{ descripcio|esc }}">{% endif %}
+{% if canonical %}<meta property="og:url" content="{{ canonical }}">{% endif %}
+<meta property="og:locale" content="{{ idioma }}">
+{% if og_imatge %}<meta property="og:image" content="{{ og_imatge }}"><meta name="twitter:card" content="summary_large_image">{% endif %}
+{% if lloc.disseny and lloc.disseny.google_fonts %}<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?{{ lloc.disseny.google_fonts }}&display=swap">{% endif %}
+<link rel="stylesheet" href="/assets/tokens.css">
+<link rel="stylesheet" href="/assets/base.css">
+{% if lloc.css_extra %}<link rel="stylesheet" href="{{ lloc.css_extra }}">{% endif %}
+<link rel="icon" href="{{ lloc.favicon or lloc.logo or '/favicon.ico' }}">
+<script type="application/ld+json">
+{{ schema }}
+</script>
+</head>
+<body class="tipus-{{ p.tipus or 'pagina' }}">
+<a class="saltar" href="#contingut">{{ {'ca': 'Vés al contingut', 'es': 'Ir al contenido', 'en': 'Skip to content'}[idioma] or 'Skip' }}</a>
+<header class="capcal">
+  <div class="amplada capcal__fila">
+    <a class="marca" href="{{ inici }}">{% if lloc.logo %}<img src="{{ lloc.logo }}" alt="" width="32" height="32">{% endif %}<span>{{ lloc.nom }}</span></a>
+    <button class="menu-boto" aria-expanded="false" aria-controls="menu-principal">☰<span class="sr">Menú</span></button>
+    <nav id="menu-principal" class="menu" aria-label="Principal">
+      <ul>
+      {% for m in menu %}
+        <li{% if m.fills %} class="te-fills"{% endif %}><a href="{{ m.url }}"{% if m.url == p.url %} aria-current="page"{% endif %}>{{ m.text }}</a>
+        {% if m.fills %}<ul>{% for f in m.fills %}<li><a href="{{ f.url }}">{{ f.text }}</a></li>{% endfor %}</ul>{% endif %}
+        </li>
+      {% endfor %}
+      </ul>
+      {% for a in altres_idiomes %}<a class="idioma" href="{{ a.url }}" hreflang="{{ a.idioma }}" lang="{{ a.idioma }}">{{ a.idioma|upper }}</a>{% endfor %}
+      {% if cta and cta.url %}<a class="boto boto--petit" href="{{ cta.url }}">{{ cta.text }}</a>{% endif %}
+    </nav>
+  </div>
+</header>
+<main id="contingut">
+{% block main %}{% endblock %}
+</main>
+<footer class="peu">
+  <div class="amplada peu__fila">
+    <div><strong>{{ lloc.nom }}</strong><p>{{ lloc.descripcio|tr(idioma) }}</p></div>
+    <ul>{% for m in peu %}<li><a href="{{ m.url }}">{{ m.text }}</a></li>{% endfor %}</ul>
+  </div>
+  <p class="amplada peu__legal">© {{ any }} {{ lloc.nom }}</p>
+</footer>
+<script src="/assets/base.js" defer></script>
+</body>
+</html>

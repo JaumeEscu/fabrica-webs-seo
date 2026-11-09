@@ -1,0 +1,20 @@
+<section class="directori">
+  {% if html %}<div class="directori__intro">{{ html }}</div>{% endif %}
+  {% if fitxes %}
+  <ul class="fitxes">
+  {% for fx in fitxes %}
+    <li class="fitxa{% if fx.destacat %} fitxa--destacada{% endif %}">
+      <div class="fitxa__cap">
+        <h3>{% if ruta_fitxa(fx) %}<a href="{{ ruta_fitxa(fx) }}">{{ fx.nom }}</a>{% else %}{{ fx.nom }}{% endif %}</h3>
+        <span class="fitxa__lloc">{{ fx.municipi }}{% if fx.comarca %} · {{ fx.comarca }}{% endif %}</span>
+      </div>
+      {% if fx.descripcio %}<p>{{ fx.descripcio|tr(idioma) }}</p>{% endif %}
+      {% if fx.etiquetes %}<ul class="etiquetes">{% for e in fx.etiquetes %}<li>{{ e|tr(idioma) }}</li>{% endfor %}</ul>{% endif %}
+      {% if fx.verificat %}<p class="segell">✓ {{ {'ca': 'Comprovat el', 'es': 'Comprobado el', 'en': 'Checked'}[idioma] }} {{ fx.verificat }}</p>{% endif %}
+    </li>
+  {% endfor %}
+  </ul>
+  {% else %}
+  <p class="avis">{{ {'ca': 'Encara no hi ha fitxes verificades en aquesta zona.', 'es': 'Todavía no hay fichas verificadas en esta zona.', 'en': 'No verified listings here yet.'}[idioma] }}</p>
+  {% endif %}
+</section>

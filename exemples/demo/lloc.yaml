@@ -1,0 +1,56 @@
+# Configuració de la web per al generador (scripts/construir.py).
+nom: "Demo Directori"
+domini: "https://demo.cat"
+idiomes: [ca, es]
+idioma_defecte: "ca"   # x-default i redirecció de l'arrel
+tema: base                              # base (del plugin) o "tema" (carpeta pròpia del projecte)
+descripcio: "Directori de prova de la fàbrica"
+logo: /assets/logo.svg
+
+# Identitat per al schema Organization i per a la coherència d'entitat (IA i Google).
+organitzacio:
+  tipus: Organization          # Organization | Person | LocalBusiness ...
+  nom: "Demo Directori"
+  descripcio: "Directori de prova de la fàbrica"
+  perfils: []                  # sameAs: LinkedIn, Instagram, Google Business...
+
+# Autors i revisors (E-E-A-T). Les pàgines hi fan referència per id.
+autors:
+  jaume: { nom: "Jaume Esteban", carrec: { ca: Fundador, es: Fundador } }
+#  jaume: { nom: "Jaume Esteban", carrec: "Fundador", url: "@sobre", perfils: [] }
+
+# Tokens del sistema de disseny (fase 2b). El tema els converteix en variables CSS.
+disseny:
+  color_text: "#1d2021"
+  color_fons: "#fbfaf7"
+  color_suau: "#f1eee8"
+  color_primari: "#1f5f5b"
+  color_accent: "#d9643a"
+  color_linia: "#e2ddd3"
+  font_titols: "'Fraunces', Georgia, serif"
+  font_text: "'Inter', system-ui, sans-serif"
+  google_fonts: "family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600"
+  radi: "14px"
+  amplada: "1120px"
+
+# Menú i peu. "@clau" enllaça la pàgina amb aquesta clau en l'idioma actual.
+menu:
+  - { text: { ca: Preus, es: Precios }, enllac: "@preu" }
+  - text: { ca: Ciutats, es: Ciudades }
+    enllac: "@inici"
+    fills:
+      - { text: Sabadell, enllac: "@sabadell" }
+#  - { text: { ca: Preus, es: Precios }, enllac: "@preu" }
+peu: []
+cta_principal:
+  text: { ca: "Demana pressupost", es: "Pide presupuesto" }
+  enllac: "@preu"
+#  text: { ca: "Demana pressupost", es: "Pide presupuesto" }
+#  enllac: "@pressupost"
+
+# Directori (opcional): fitxes a directori/fitxes.yaml
+directori:
+  actiu: true
+  min_fitxes_indexar: 5        # una pàgina amb ::: directori i menys fitxes queda noindex
+  pagina_fitxa: true          # genera una pàgina per fitxa
+  ruta_fitxa: { ca: fitxa, es: ficha }

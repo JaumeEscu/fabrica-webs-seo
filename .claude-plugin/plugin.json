@@ -1,0 +1,7 @@
+{
+  "name": "fabrica-webs-seo",
+  "version": "0.1.0",
+  "description": "Mètode, plantilles i eines per crear webs optimitzades per a SEO i continguts, des d'una web existent o d'una idea nova. Basat en el playbook de 12 passos i l'experiència de Bona Tria.",
+  "author": { "name": "Jaume Esteban" },
+  "keywords": ["seo", "contingut", "web estàtica", "directori", "keyword research"]
+}

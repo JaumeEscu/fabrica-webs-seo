@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block main %}
+{% set fx = p.fitxa %}
+<article class="pagina fitxa-pagina">
+  <header class="hero">
+    <div class="amplada">
+      {% if molles|length > 1 %}<nav class="molles" aria-label="Breadcrumb"><ol>{% for b in molles %}<li>{% if not loop.last %}<a href="{{ b.url }}">{{ b.nom }}</a>{% else %}<span aria-current="page">{{ b.nom }}</span>{% endif %}</li>{% endfor %}</ol></nav>{% endif %}
+      <h1>{{ fx.nom }}</h1>
+      <p class="entradeta">{{ fx.municipi }}{% if fx.comarca %} · {{ fx.comarca }}{% endif %}</p>
+      {% if fx.verificat %}<p class="segell">✓ {{ {'ca': 'Dades comprovades el', 'es': 'Datos comprobados el', 'en': 'Checked on'}[idioma] }} {{ fx.verificat }}</p>{% endif %}
+    </div>
+  </header>
+  <div class="amplada cos">
+    {% if fx.descripcio %}<p>{{ fx.descripcio|tr(idioma) }}</p>{% endif %}
+    {% if fx.dades %}
+    <dl class="dades">{% for k, v in fx.dades.items() %}<div><dt>{{ k }}</dt><dd>{{ v|tr(idioma) }}</dd></div>{% endfor %}</dl>
+    {% endif %}
+    {{ cos }}
+    {% if fx.fonts %}<p class="fonts"><strong>{{ {'ca': 'Fonts', 'es': 'Fuentes', 'en': 'Sources'}[idioma] }}:</strong> {% for f in fx.fonts %}<a href="{{ f }}" rel="nofollow noopener">{{ loop.index }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>{% endif %}
+    {% if fx.web %}<p><a class="boto" href="{{ fx.web }}" rel="nofollow noopener">{{ {'ca': 'Visita la web', 'es': 'Visita la web', 'en': 'Visit website'}[idioma] }}</a></p>{% endif %}
+  </div>
+</article>
+{% endblock %}

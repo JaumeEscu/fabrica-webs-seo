@@ -1,0 +1,45 @@
+# Estat del projecte. El llegeix el dashboard i l'actualitza cada fase.
+nom: "{{NOM}}"
+descripcio: "{{DESCRIPCIO}}"
+tipus: "{{TIPUS}}"          # directori | marca-personal | negoci-local | ecommerce | altres
+mode: "{{MODE}}"            # existent (partim d'una web) | nou (partim d'una idea)
+domini: "{{DOMINI}}"
+idiomes: {{IDIOMES}}
+estat: actiu                # actiu | pausa | publicat | arxivat
+creat: "{{DATA}}"
+actualitzat: "{{DATA}}"
+
+# Fases del mètode. estat: pendent | en-curs | fet
+fases:
+  f0_brief:        { estat: en-curs, data: "{{DATA}}" }
+  f1_estrategia:   { estat: pendent }
+  f2_keywords:     { estat: pendent }
+  f2b_disseny:     { estat: pendent }
+  f3_pagines:      { estat: pendent }
+  f4_construir:    { estat: pendent }
+  f5_mesurar:      { estat: pendent }
+
+# Una entrada per pàgina del mapa paraula clau → URL (s'omple a la fase 2).
+# estat: idea | keywords | competencia | estructura | text | revisio | publicada
+pagines: []
+#  - clau: preu
+#    slug: { ca: preu-aerotermia, es: precio-aerotermia }
+#    keyword: "precio aerotermia"
+#    volum: 5000
+#    prioritat: 1
+#    estat: text
+
+# Coses que esperen algú (sobretot el propietari).
+pendents: []
+#  - "Exportar els CSV del Keyword Planner (veure keywords/INSTRUCCIONS.md)"
+
+bloquejos: []
+seguent: "Omplir el brief (fase 0)"
+
+# Dades de Search Console (fase 5). Les omple la skill de mesurar.
+metriques: {}
+#  gsc: { periode: "2027-03", clics: 0, impressions: 0, ctr: 0, posicio: 0 }
+
+enllacos: {}
+#  web: https://...
+#  doc_context: https://...

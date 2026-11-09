@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block main %}
+<article class="pagina">
+  <header class="hero">
+    <div class="amplada">
+      {% if molles|length > 1 %}
+      <nav class="molles" aria-label="Breadcrumb"><ol>
+        {% for b in molles %}<li>{% if not loop.last %}<a href="{{ b.url }}">{{ b.nom }}</a>{% else %}<span aria-current="page">{{ b.nom }}</span>{% endif %}</li>{% endfor %}
+      </ol></nav>
+      {% endif %}
+      {% if p.avantitol %}<p class="avantitol">{{ p.avantitol }}</p>{% endif %}
+      <h1>{{ p.h1 }}</h1>
+      {% if p.entradeta %}<p class="entradeta">{{ p.entradeta }}</p>{% endif %}
+      {% if p.actualitzat or autor or revisor %}
+      <p class="signatura">
+        {% if autor %}<span>{{ {'ca': 'Per', 'es': 'Por', 'en': 'By'}[idioma] }} {% if autor.url %}<a href="{{ autor.url }}">{{ autor.nom }}</a>{% else %}{{ autor.nom }}{% endif %}</span>{% endif %}
+        {% if revisor %}<span>{{ {'ca': 'Revisat per', 'es': 'Revisado por', 'en': 'Reviewed by'}[idioma] }} {{ revisor.nom }}{% if revisor.carrec %}, {{ revisor.carrec|tr(idioma) }}{% endif %}</span>{% endif %}
+        {% if p.actualitzat %}<span>{{ {'ca': 'Actualitzat el', 'es': 'Actualizado el', 'en': 'Updated'}[idioma] }} <time datetime="{{ p.actualitzat }}">{{ p.actualitzat }}</time></span>{% endif %}
+      </p>
+      {% endif %}
+    </div>
+  </header>
+  <div class="amplada cos">
+    {{ cos }}
+  </div>
+  {% if faq %}
+  <section class="faq amplada" id="faq">
+    <h2>{{ p.titol_faq or {'ca': 'Preguntes freqüents', 'es': 'Preguntas frecuentes', 'en': 'Frequently asked questions'}[idioma] }}</h2>
+    {% for f in faq %}
+    <details{% if loop.first %} open{% endif %}><summary>{{ f.p }}</summary><div>{{ f.r }}</div></details>
+    {% endfor %}
+  </section>
+  {% endif %}
+  {% if relacionades %}
+  <nav class="relacionades amplada" aria-label="{{ {'ca': 'També et pot interessar', 'es': 'También te puede interesar', 'en': 'Related'}[idioma] }}">
+    <h2>{{ {'ca': 'També et pot interessar', 'es': 'También te puede interesar', 'en': 'Related'}[idioma] }}</h2>
+    <div class="graella">
+    {% for r in relacionades %}<a class="targeta targeta--enllac" href="{{ r.url }}"><strong>{{ r.titol }}</strong>{% if r.descripcio %}<span>{{ r.descripcio }}</span>{% endif %}</a>{% endfor %}
+    </div>
+  </nav>
+  {% endif %}
+</article>
+{% endblock %}

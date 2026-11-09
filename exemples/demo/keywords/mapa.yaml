@@ -1,0 +1,10 @@
+excloure: [wikipedia, pdf, que es]
+pagines:
+  - clau: preu
+    inclou: [precio, preu, cuanto cuesta, quant costa, coste]
+  - clau: sabadell
+    inclou: [sabadell]
+  - clau: radiadors
+    inclou: [radiador]
+  - clau: barcelona
+    inclou: [barcelona]

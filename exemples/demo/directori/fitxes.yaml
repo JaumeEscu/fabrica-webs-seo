@@ -1,0 +1,16 @@
+- slug: empresa-a
+  nom: Empresa A
+  municipi: Sabadell
+  comarca: Vallès Occidental
+  serveis: [aerotermia]
+  descripcio: { ca: "Especialistes des del 2005.", es: "Especialistas desde 2005." }
+  etiquetes: [CAE, RITE]
+  verificat: 2026-11-03
+  web: https://example.com
+  dades: { "Anys": "20" }
+  destacat: true
+- slug: empresa-b
+  nom: Empresa B
+  municipi: Terrassa
+  serveis: [aerotermia]
+  verificat: 2026-11-03
