@@ -73,6 +73,7 @@ CODIS = {
     "encap_buit": (3, False, "Un encapçalament buit o només amb xifres no descriu la secció."),
     "encap_duplicat": (3, False, "Dos H2 iguals a la mateixa pàgina no ajuden a navegar."),
     "schema_buit": (3, False, "Camps buits al schema: millor treure'ls que deixar-los en blanc."),
+    "og_trencada": (2, False, "La imatge per compartir no existeix: a xarxes i missatgeria l'enllaç surt sense imatge o trencat."),
     "og": (3, False, "Sense Open Graph, l'enllaç compartit a xarxes i missatgeria es veu pobre."),
     "sense_llms": (3, False, "llms.txt és un resum opcional per a assistents d'IA."),
     "entrenament": (3, False, "Informatiu: bloquejar l'entrenament no treu de la cerca, però CCBot alimenta el corpus de molts models."),
@@ -123,8 +124,6 @@ class Analitzador(HTMLParser):
             self.enllacos.append(a["href"])
         elif tag == "img":
             self.imatges.append(a)
-        elif tag == "source" and a.get("srcset") and self._en_main:
-            pass
         elif tag == "iframe":
             self.iframes.append(a)
         elif tag == "script" and a.get("type") == "application/ld+json":
@@ -236,11 +235,18 @@ def analitzar(dir_projecte):
     pagines = {}
     for arrel, _, fitxers in os.walk(web):
         for f in fitxers:
-            if f != "index.html" or arrel == web:
+            if f != "index.html":
                 continue
-            ruta = "/" + os.path.relpath(arrel, web).replace(os.sep, "/") + "/"
+            html = open(os.path.join(arrel, f), encoding="utf-8").read()
+            if arrel == web:
+                # A una web multiidioma, l'arrel només redirigeix a /ca/; a una d'un sol idioma és la portada
+                if re.search(r'http-equiv=["\']?refresh', html, re.I):
+                    continue
+                ruta = "/"
+            else:
+                ruta = "/" + os.path.relpath(arrel, web).replace(os.sep, "/") + "/"
             a = Analitzador()
-            a.feed(open(os.path.join(arrel, f), encoding="utf-8").read())
+            a.feed(html)
             pagines[ruta] = a
     domini = ""
     for a in pagines.values():
@@ -330,8 +336,13 @@ def analitzar(dir_projecte):
             F("sense_jsonld", "Sense dades estructurades (JSON-LD)")
         if faq_schema and faq_schema > a.faq_visibles:
             F("faq_schema", f"El schema FAQ té {faq_schema} preguntes però només se'n veuen {a.faq_visibles}")
-        if a.og.get("og:type") == "article" and not any("author" in b for b in a.jsonld):
+        if a.og.get("og:type") == "article" and not any("author" in b for b in a.jsonld) \
+                and not any(c == "sense_autor" for c, _ in troballes[ruta]):
             F("sense_autor", "Article sense autor identificat")
+        og_img = a.og.get("og:image", "")
+        if og_img and domini and og_img.startswith(domini):
+            if not os.path.isfile(os.path.join(web, urlparse(og_img).path.lstrip("/"))):
+                F("og_trencada", f"og:image apunta a un fitxer que no existeix: {urlparse(og_img).path}")
         falten = [k for k in ("og:title", "og:description", "og:image") if not a.og.get(k)]
         if falten and not noindex:
             F("og", "Falta " + ", ".join(falten) + ("" if a.twitter.get("twitter:card") else " i twitter:card"))
@@ -395,7 +406,7 @@ def analitzar(dir_projecte):
     rutes = sorted(textos)
     for i, r1 in enumerate(rutes):
         for r2 in rutes[i + 1:]:
-            if r1.split("/")[1] != r2.split("/")[1]:
+            if pagines[r1].lang != pagines[r2].lang:
                 continue
             s1, s2 = textos[r1], textos[r2]
             comu = len(s1 & s2) / max(1, min(len(s1), len(s2)))
