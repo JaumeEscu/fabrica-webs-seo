@@ -18,7 +18,8 @@ Actualitza `pagines[].estat` a `projecte.yaml` a cada pas: competencia → estru
 ## Pas 6 — Jerarquia d'encapçalaments (`06_encapcalaments.md`)
 - H1 amb la paraula clau exacta (o gairebé). Cada H2/H3 amb una variant real del cluster (de `keywords/keywords.csv`), sense repetir la principal.
 - Ordre = el recorregut de l'usuari: primer la pregunta que porta a Google, després les objeccions, després a qui contractar / com fer el pas.
-- Cap encapçalament genèric sense cerca («Introducció», «Conclusió»), excepte els de conversió.
+- Cap encapçalament genèric sense cerca («Introducció», «Conclusió»), excepte els de conversió. Cap encapçalament que sigui només una xifra («+25», «90 %»).
+- **Subconsultes (query fan-out)**: llista les 5–10 preguntes en què una IA desplegaria la consulta principal (per a qui, quant costa, comparativa, a [ciutat], alternatives) i comprova que cadascuna té una secció o una FAQ que la respon.
 - Llista d'encapçalaments descartats i per què.
 - Si hi ha dos idiomes: encapçalaments en l'idioma amb més volum i, a sota, la versió de l'altre.
 
@@ -33,7 +34,8 @@ Taula bloc a bloc: bloc, què conté, **component del sistema de disseny** (fase
 - Text complet bloc a bloc, en l'idioma amb més volum.
 - **Primera frase de cada secció = resposta directa** (40–60 paraules autònomes que una IA pugui citar sense context).
 - Xifres amb font i data al costat. Si falta: `[VERIFICAR]`. Cap dada inventada.
-- **Informació pròpia** (information gain): almenys un element que no tinguin els competidors (dada, taula, experiència, eina).
+- **Informació pròpia** (information gain): almenys un element que no tinguin els competidors (dada, taula, experiència, eina). El que només pot aportar el propietari: experiència real (casos, fotos, errors que veu cada dia), dades pròpies (preus, terminis, nombre de clients), opinió («jo no faria X, i t'explico per què») i una persona amb nom i cara.
+- **Title**: fórmula «Què fas + On + Per què tu» dins 30–60 caràcters (p. ex. «Reparació de calderes a Badalona en 24 h | Marca»). La description, com un anunci: benefici concret i acció.
 - Enllaços interns segons el pla de la fase 1: 2–4 cap a germanes, 1 cap al hub, text descriptiu.
 - Checklist final de paraules del cluster incloses (✓) i no incloses (per què).
 
@@ -54,5 +56,6 @@ El generador ja crea Organization, WebSite, WebPage, BreadcrumbList, Article (gu
    python3 "${CLAUDE_PLUGIN_ROOT}/scripts/construir.py" <carpeta-projecte>
    python3 "${CLAUDE_PLUGIN_ROOT}/scripts/comprovar.py" <carpeta-projecte>
    ```
-3. Fes una captura (mòbil i escriptori) de la pàgina i ensenya-la al propietari.
-4. `estat: revisio` a `projecte.yaml`; quan el propietari dona l'ok i no queden `[VERIFICAR]` a la pàgina, està llesta per publicar.
+3. Revisa l'informe per prioritat (taula «Què arreglar primer»): 🔴 abans de seguir; 🟠 abans de publicar; 🟡 quan es pugui.
+4. Fes una captura (mòbil i escriptori) de la pàgina i ensenya-la al propietari. Comprova també la primera pantalla: H1 que diu què fas, acció principal visible i contacte sense passos intermedis (WhatsApp o telèfon directes, sense pàgines d'espera).
+5. `estat: revisio` a `projecte.yaml`; quan el propietari dona l'ok i no queden `[VERIFICAR]` a la pàgina, està llesta per publicar.

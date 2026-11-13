@@ -22,6 +22,9 @@ import re
 import shutil
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import bots_ia  # noqa: E402
+
 try:
     import yaml
     import markdown
@@ -365,7 +368,8 @@ class Lloc:
         for it in items or []:
             enllac = it.get("enllac", "#")
             if enllac.startswith("@"):
-                enllac = self.url_clau(enllac[1:], idioma, "lloc.yaml")
+                clau, _, ancora = enllac[1:].partition("#")
+                enllac = self.url_clau(clau, idioma, "lloc.yaml") + (f"#{ancora}" if ancora else "")
             out.append({"text": tr(it.get("text"), idioma), "url": enllac,
                         "fills": self.menu(it.get("fills"), idioma) if it.get("fills") else []})
         return out
@@ -444,9 +448,15 @@ class Lloc:
             "autor": autors.get(p.get("autor")), "revisor": autors.get(p.get("revisor")),
             "og_imatge": self.absoluta(p.get("og_imatge") or self.cfg.get("og_imatge")) if (p.get("og_imatge") or self.cfg.get("og_imatge")) else "",
             "inici": self.ruta(idioma, ""), "any": dt.date.today().year,
+            "og_locale": (self.cfg.get("locales") or {}).get(idioma) or bots_ia.LOCALES.get(idioma, idioma),
+            "og_alternes": [(self.cfg.get("locales") or {}).get(i) or bots_ia.LOCALES.get(i, i) for i in self.idiomes
+                            if i != idioma and (p["clau"], i) in self.per_clau],
         }
         if not p.get("descripcio"):
             self.avisos.append(f"{p['url']}: sense meta descripció")
+        if not ctx["og_imatge"] and not p.get("noindex") and not getattr(self, "_avis_og", False):
+            self._avis_og = True
+            self.avisos.append("Sense imatge OG: afegeix og_imatge a lloc.yaml (1200×630, < 300 KB) o a la pàgina")
         plantilla = self.env.get_template(p.get("plantilla") or "pagina.html")
         sortida = RE_ENLLAC_CLAU.sub(lambda m: f'{m.group(1)}="{self.url_clau(m.group(2), idioma, p["font"])}{m.group(3) or ""}"',
                                      plantilla.render(**ctx))
@@ -470,10 +480,36 @@ class Lloc:
         with open(os.path.join(self.sortida, "sitemap.xml"), "w", encoding="utf-8") as f:
             f.write("\n".join(files) + "\n")
 
+    def robots_txt(self):
+        """robots.txt amb els rastrejadors d'IA explícits (veure scripts/bots_ia.py)."""
+        politica = self.cfg.get("bots_ia") or "permetre"
+        if politica not in bots_ia.POLITIQUES:
+            self.avisos.append(f"lloc.yaml: bots_ia «{politica}» no és vàlid ({', '.join(bots_ia.POLITIQUES)}); faig servir «permetre»")
+            politica = "permetre"
+        privades = [r if r.endswith("/") else r + "/" for r in (self.cfg.get("robots_bloquejar") or [])]
+        L = [f"# robots.txt · {self.cfg.get('nom', '')}", f"# Política de rastrejadors d'IA: {politica}", ""]
+        L += ["User-agent: *", "Allow: /"] + [f"Disallow: {r}" for r in privades] + [""]
+        # Cercadors i assistents: explícits, perquè quedi clar que poden entrar
+        for grup in ("cerca", "usuari"):
+            L.append("# Cerca (clàssica i amb IA)" if grup == "cerca" else "# Assistents a petició de l'usuari")
+            for b in bots_ia.BOTS[grup]:
+                L.append(f"User-agent: {b}")
+            L += ["Allow: /"] + [f"Disallow: {r}" for r in privades] + [""]
+        bloc = bots_ia.bloquejats(politica)
+        permesos = [x for x in bots_ia.BOTS["entrenament"] if x not in bloc]
+        if permesos:
+            L.append("# Entrenament de models (permès)")
+            L += [f"User-agent: {x}" for x in permesos] + ["Allow: /"] + [f"Disallow: {r}" for r in privades] + [""]
+        if bloc:
+            L.append("# Entrenament de models (bloquejat)")
+            L += [f"User-agent: {x}" for x in bloc] + ["Disallow: /", ""]
+        L.append(f"Sitemap: {self.absoluta('/sitemap.xml')}")
+        return "\n".join(L) + "\n"
+
     def extres(self):
         s = self.sortida
         with open(os.path.join(s, "robots.txt"), "w", encoding="utf-8") as f:
-            f.write(f"User-agent: *\nAllow: /\n\nSitemap: {self.absoluta('/sitemap.xml')}\n")
+            f.write(self.robots_txt())
         # llms.txt: resum per a cercadors amb IA
         linies = [f"# {self.cfg.get('nom')}", "", f"> {tr(self.cfg.get('descripcio'), self.idioma_defecte)}", ""]
         for idioma in self.idiomes:

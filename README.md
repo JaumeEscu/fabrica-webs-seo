@@ -44,7 +44,9 @@ La skill `fabrica-seo` crea el projecte (o el retroba pel seu `projecte.yaml`) i
 | `rastrejar.py` | Inventari d'una web existent (sitemap o enllaços) |
 | `keywords.py` | Agrupa els CSV del Keyword Planner per pàgina i detecta canibalitzacions |
 | `construir.py` | Genera la web: HTML, canonical, hreflang, Open Graph, JSON-LD, sitemap, robots, llms.txt |
-| `comprovar.py` | Comprovació SEO de la web generada abans de publicar |
+| `comprovar.py` | Comprovació SEO de la web generada abans de publicar, amb prioritats (crític, important, menor) |
+| `auditar_viu.py` | Auditoria de la web publicada: robots i 403 per a cada bot d'IA, sitemap, www/https, pes, Common Crawl |
+| `bots_ia.py` | Llista de rastrejadors de cerca, d'assistents i d'entrenament (la fan servir els altres scripts) |
 | `dashboard.py` | Dashboard de tots els projectes |
 
 ## Estructura d'un projecte

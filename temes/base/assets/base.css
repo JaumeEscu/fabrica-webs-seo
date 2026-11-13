@@ -141,9 +141,9 @@ mark.verificar{background:#fff2b3;color:#5a4500;padding:0 .2em;border-radius:2px
 .fitxa{margin:0;padding:1.4rem 0;border-bottom:1px solid var(--color-linia)}
 .fitxa--destacada{padding-left:1rem;border-left:3px solid var(--color-accent)}
 .fitxa__cap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.25rem 1rem;align-items:baseline}
-.fitxa h3{margin:0;font-size:1.2rem}
-.fitxa h3 a{color:var(--color-text);text-decoration:none}
-.fitxa h3 a:hover{color:var(--color-primari)}
+.fitxa h2,.fitxa h3{margin:0;font-size:1.2rem}
+.fitxa h2 a,.fitxa h3 a{color:var(--color-text);text-decoration:none}
+.fitxa h2 a:hover,.fitxa h3 a:hover{color:var(--color-primari)}
 .fitxa p{font-size:1rem;margin:.4rem 0 0}
 .fitxa__lloc{font-family:var(--font-titols);font-size:.88rem;color:color-mix(in srgb,var(--color-text) 62%,transparent)}
 .etiquetes{display:flex;flex-wrap:wrap;gap:.4rem;list-style:none;padding:0;margin:.75rem 0 .5rem}
