@@ -446,7 +446,7 @@ class Lloc:
             "cta": {"text": tr((self.cfg.get("cta_principal") or {}).get("text"), idioma),
                     "url": self.menu([self.cfg.get("cta_principal")], idioma)[0]["url"] if self.cfg.get("cta_principal") else None},
             "autor": autors.get(p.get("autor")), "revisor": autors.get(p.get("revisor")),
-            "og_imatge": self.absoluta(p.get("og_imatge") or self.cfg.get("og_imatge")) if (p.get("og_imatge") or self.cfg.get("og_imatge")) else "",
+            "og_imatge": self.absoluta(tr(p.get("og_imatge") or self.cfg.get("og_imatge"), idioma)) if tr(p.get("og_imatge") or self.cfg.get("og_imatge"), idioma) else "",
             "inici": self.ruta(idioma, ""), "any": dt.date.today().year,
             "og_locale": (self.cfg.get("locales") or {}).get(idioma) or bots_ia.LOCALES.get(idioma, idioma),
             "og_alternes": [(self.cfg.get("locales") or {}).get(i) or bots_ia.LOCALES.get(i, i) for i in self.idiomes

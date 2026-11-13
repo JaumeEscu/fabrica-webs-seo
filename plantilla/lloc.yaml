@@ -6,7 +6,7 @@ idioma_defecte: "{{IDIOMA_DEFECTE}}"   # x-default i redirecció de l'arrel
 tema: base                              # base (del plugin) o "tema" (carpeta pròpia del projecte)
 descripcio: "{{DESCRIPCIO}}"
 logo: /assets/logo.svg
-og_imatge: /assets/og.jpg               # imatge per compartir (1200×630, < 300 KB). Es pot sobreescriure per pàgina.
+og_imatge: /assets/og.jpg               # imatge per compartir (1200×630, < 300 KB). Per idioma: {ca: /assets/og-ca.jpg, es: /assets/og-es.jpg}. Es pot sobreescriure per pàgina.
 
 # Rastrejadors d'IA al robots.txt (veure skills/fabrica-seo/referencies/seo-ia.md)
 #   permetre: tothom · sense-entrenament: fora GPTBot, ClaudeBot… però CCBot sí · nomes-cerca: fora tot l'entrenament
