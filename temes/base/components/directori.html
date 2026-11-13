@@ -5,7 +5,7 @@
   {% for fx in fitxes %}
     <li class="fitxa{% if fx.destacat %} fitxa--destacada{% endif %}">
       <div class="fitxa__cap">
-        <h3>{% if ruta_fitxa(fx) %}<a href="{{ ruta_fitxa(fx) }}">{{ fx.nom }}</a>{% else %}{{ fx.nom }}{% endif %}</h3>
+        <h{{ nivell or 3 }} class="directori__nom">{% if ruta_fitxa(fx) %}<a href="{{ ruta_fitxa(fx) }}">{{ fx.nom }}</a>{% else %}{{ fx.nom }}{% endif %}</h{{ nivell or 3 }}>
         <span class="fitxa__lloc">{{ fx.municipi }}{% if fx.comarca %} · {{ fx.comarca }}{% endif %}</span>
       </div>
       {% if fx.descripcio %}<p>{{ fx.descripcio|tr(idioma) }}</p>{% endif %}

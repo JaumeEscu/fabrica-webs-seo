@@ -22,6 +22,15 @@ Aprenentatges de Bona Tria que s'apliquen a tots els projectes.
 - Pàgines programàtiques (ciutat, servei×ciutat): només s'indexen si tenen dades pròpies suficients (mínim de fitxes a `lloc.yaml`).
 - E-E-A-T: autor real, revisor quan hi ha dades tècniques, data d'actualització, pàgina «com treballem / com verifiquem».
 
+## SEO per a IA
+Detall a `seo-ia.md`. Resum:
+- Cap rastrejador de cerca ni d'assistent bloquejat (robots.txt ni servidor). Els d'entrenament, decisió del propietari (`bots_ia` a `lloc.yaml`).
+- Entitat clara: Organization/LocalBusiness/Person amb `sameAs` a tots els perfils oficials.
+- H1 descriptiu del que oferim, mai només el nom de la marca. Encapçalaments amb paraules, no xifres soles.
+- Contingut propi i concret («reparem calderes a Badalona en menys de 24 h») en lloc de genèric («empresa líder amb anys d'experiència»).
+- Cada pàgina respon la intenció principal i les subconsultes que se'n deriven (query fan-out).
+- Prioritza per impacte en el negoci, no per gravetat tècnica: un bot bloquejat és més greu que una Twitter Card que falta.
+
 ## Idiomes
 - Si el públic cerca en dos idiomes, fes les dues versions. Escriu primer en l'idioma amb més volum i adapta (no tradueixis literalment) a l'altre.
 - Slugs en l'idioma de cada versió. La mateixa `clau` a les dues versions per enllaçar-les (hreflang).

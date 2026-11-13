@@ -14,8 +14,9 @@
 <meta property="og:title" content="{{ titol|esc }}">
 {% if descripcio %}<meta property="og:description" content="{{ descripcio|esc }}">{% endif %}
 {% if canonical %}<meta property="og:url" content="{{ canonical }}">{% endif %}
-<meta property="og:locale" content="{{ idioma }}">
-{% if og_imatge %}<meta property="og:image" content="{{ og_imatge }}"><meta name="twitter:card" content="summary_large_image">{% endif %}
+<meta property="og:locale" content="{{ og_locale or idioma }}">{% for l in og_alternes or [] %}<meta property="og:locale:alternate" content="{{ l }}">{% endfor %}
+{% if og_imatge %}<meta property="og:image" content="{{ og_imatge }}">{% if og_mida %}<meta property="og:image:width" content="{{ og_mida[0] }}"><meta property="og:image:height" content="{{ og_mida[1] }}">{% endif %}<meta name="twitter:card" content="summary_large_image">{% else %}<meta name="twitter:card" content="summary">{% endif %}
+<meta name="twitter:title" content="{{ titol|esc }}">{% if descripcio %}<meta name="twitter:description" content="{{ descripcio|esc }}">{% endif %}
 {% if lloc.disseny and lloc.disseny.google_fonts %}<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?{{ lloc.disseny.google_fonts }}&display=swap">{% endif %}
 <link rel="stylesheet" href="/assets/tokens.css">

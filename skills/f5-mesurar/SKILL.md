@@ -17,6 +17,11 @@ Demana al propietari l'export de Search Console (Rendiment → últims 3 mesos c
 - **Consultes noves sense pàgina** → candidates a pàgina nova (tornen a la fase 2 → 3).
 - **Indexació**: pàgines «Descoberta: actualment sense indexar» o «Rastrejada, no indexada» → millorar-les o desindexar-les.
 
+## 2b. Visibilitat a les IA
+- Torna a passar `auditar_viu.py` (un canvi de CDN o de plugin de seguretat pot bloquejar bots sense avisar).
+- Prova de recomanació a ChatGPT, Gemini i Mode IA de Google amb 3–5 preguntes reals del client (veure `../fabrica-seo/referencies/seo-ia.md`). Desa les respostes a `informes/AAAA-MM-ia.md`: surt la marca? en quina posició? quines fonts cita? Les fonts que citen per als competidors són llocs on cal tenir presència.
+- A GA4 o a l'analítica: trànsit de referència de chatgpt.com, perplexity.ai, gemini.google.com i copilot.microsoft.com.
+
 ## 3. Refrescar
 - Revisa les dades amb data (preus, ajudes, normativa) un cop cada trimestre i abans de la temporada alta. Actualitza `actualitzat:` a la capçalera només quan el canvi és real.
 - Treu les marques `[VERIFICAR]` que s'hagin confirmat.

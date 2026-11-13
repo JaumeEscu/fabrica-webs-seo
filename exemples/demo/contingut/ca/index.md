@@ -9,6 +9,8 @@ descripcio: "Directori de prova amb fitxes comprovades i guies de preu."
 Comparem professionals amb **dades comprovades** a la seva web. Tu tries a qui demanes pressupost.
 :::
 
+## Per on vols començar
+
 ::: targetes columnes=2
 ### [Preus](@preu)
 Quant costa, amb fonts.

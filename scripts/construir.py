@@ -22,6 +22,9 @@ import re
 import shutil
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import bots_ia  # noqa: E402
+
 try:
     import yaml
     import markdown
@@ -70,6 +73,42 @@ def attrs(cadena):
     for m in RE_ATTR.finditer(cadena or ""):
         out[m.group(1)] = m.group(3) if m.group(3) is not None else (m.group(4) if m.group(4) is not None else m.group(5))
     return out
+
+
+def mida_imatge(ruta):
+    """(amplada, alçada) d'una imatge PNG, JPEG, GIF o WebP sense llibreries externes; None si no es pot llegir."""
+    import struct
+    try:
+        with open(ruta, "rb") as f:
+            cap = f.read(32)
+            if cap[:8] == b"\x89PNG\r\n\x1a\n":
+                return struct.unpack(">II", cap[16:24])
+            if cap[:6] in (b"GIF87a", b"GIF89a"):
+                return struct.unpack("<HH", cap[6:10])
+            if cap[:4] == b"RIFF" and cap[8:12] == b"WEBP":
+                if cap[12:16] == b"VP8X":
+                    return (int.from_bytes(cap[24:27], "little") + 1, int.from_bytes(cap[27:30], "little") + 1)
+                if cap[12:16] == b"VP8 ":
+                    f.seek(26)
+                    w, h = struct.unpack("<HH", f.read(4))
+                    return (w & 0x3FFF, h & 0x3FFF)
+                if cap[12:16] == b"VP8L":
+                    b = cap[21:25]
+                    return (1 + (((b[1] & 0x3F) << 8) | b[0]), 1 + (((b[3] & 0xF) << 10) | (b[2] << 2) | ((b[1] & 0xC0) >> 6)))
+            if cap[:2] == b"\xff\xd8":
+                f.seek(2)
+                while True:
+                    m = f.read(2)
+                    if len(m) < 2 or m[0] != 0xFF:
+                        return None
+                    if m[1] in (0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7, 0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF):
+                        f.read(3)
+                        h, w = struct.unpack(">HH", f.read(4))
+                        return (w, h)
+                    f.seek(struct.unpack(">H", f.read(2))[0] - 2, 1)
+    except (OSError, struct.error):
+        return None
+    return None
 
 
 def text_pla(h):
@@ -200,7 +239,7 @@ class Lloc:
                 while i < len(linies) and linies[i].strip() != ":::":
                     interior.append(linies[i])
                     i += 1
-                trossos.append(self.component(nom, at, "\n".join(interior), pagina))
+                trossos.append(self.component(nom, at, "\n".join(interior), pagina, previ="".join(trossos)))
             else:
                 buffer.append(linies[i])
             i += 1
@@ -210,7 +249,7 @@ class Lloc:
         h = RE_ENLLAC_CLAU.sub(lambda m: f'{m.group(1)}="{self.url_clau(m.group(2), pagina["idioma"], pagina["font"])}{m.group(3) or ""}"', h)
         return h
 
-    def component(self, nom, at, interior, pagina):
+    def component(self, nom, at, interior, pagina, previ=""):
         ctx = {"at": at, "idioma": pagina["idioma"], "pagina": pagina, "lloc": self.cfg}
         if nom == "targetes":
             targetes = []
@@ -230,6 +269,9 @@ class Lloc:
             fitxes = self.filtrar_fitxes(at)
             pagina.setdefault("fitxes_llistades", []).extend(fitxes)
             ctx["fitxes"] = fitxes
+            # nivell dels noms: H3 si el directori és dins una secció (ja hi ha un H2 abans), H2 si va just després de l'H1
+            nivell = str(at.get("nivell") or (3 if "<h2" in previ else 2))
+            ctx["nivell"] = nivell if nivell in ("2", "3", "4") else "3"
             ctx["ruta_fitxa"] = (lambda fx: self.ruta(pagina["idioma"], f"{tr(self.dir_cfg.get('ruta_fitxa', 'fitxa'), pagina['idioma'])}/{fx['slug']}")) \
                 if self.dir_cfg.get("pagina_fitxa") else (lambda fx: None)
             minim = int(pagina.get("min_fitxes") or self.dir_cfg.get("min_fitxes_indexar") or 0)
@@ -365,7 +407,8 @@ class Lloc:
         for it in items or []:
             enllac = it.get("enllac", "#")
             if enllac.startswith("@"):
-                enllac = self.url_clau(enllac[1:], idioma, "lloc.yaml")
+                clau, _, ancora = enllac[1:].partition("#")
+                enllac = self.url_clau(clau, idioma, "lloc.yaml") + (f"#{ancora}" if ancora else "")
             out.append({"text": tr(it.get("text"), idioma), "url": enllac,
                         "fills": self.menu(it.get("fills"), idioma) if it.get("fills") else []})
         return out
@@ -429,6 +472,7 @@ class Lloc:
             else:
                 self.avisos.append(f"{p['font']}: relacionada «{c}» no existeix")
         autors = self.cfg.get("autors") or {}
+        og, og_mida = self.imatge_og(tr(p.get("og_imatge") or self.cfg.get("og_imatge"), idioma), p)
         ctx = {
             "lloc": self.cfg, "p": p, "idioma": idioma, "cos": cos, "faq": faq, "relacionades": relacionades,
             "index": [] if p.get("index") is False else [
@@ -442,11 +486,18 @@ class Lloc:
             "cta": {"text": tr((self.cfg.get("cta_principal") or {}).get("text"), idioma),
                     "url": self.menu([self.cfg.get("cta_principal")], idioma)[0]["url"] if self.cfg.get("cta_principal") else None},
             "autor": autors.get(p.get("autor")), "revisor": autors.get(p.get("revisor")),
-            "og_imatge": self.absoluta(p.get("og_imatge") or self.cfg.get("og_imatge")) if (p.get("og_imatge") or self.cfg.get("og_imatge")) else "",
+            "og_imatge": self.absoluta(og) if og else "",
+            "og_mida": og_mida,
             "inici": self.ruta(idioma, ""), "any": dt.date.today().year,
+            "og_locale": (self.cfg.get("locales") or {}).get(idioma) or bots_ia.LOCALES.get(idioma, idioma),
+            "og_alternes": [(self.cfg.get("locales") or {}).get(i) or bots_ia.LOCALES.get(i, i) for i in self.idiomes
+                            if i != idioma and (p["clau"], i) in self.per_clau],
         }
         if not p.get("descripcio"):
             self.avisos.append(f"{p['url']}: sense meta descripció")
+        if not ctx["og_imatge"] and not p.get("noindex") and not getattr(self, "_avis_og", False):
+            self._avis_og = True
+            self.avisos.append("Sense imatge OG: afegeix og_imatge a lloc.yaml (1200×630, < 300 KB) o a la pàgina")
         plantilla = self.env.get_template(p.get("plantilla") or "pagina.html")
         sortida = RE_ENLLAC_CLAU.sub(lambda m: f'{m.group(1)}="{self.url_clau(m.group(2), idioma, p["font"])}{m.group(3) or ""}"',
                                      plantilla.render(**ctx))
@@ -470,10 +521,53 @@ class Lloc:
         with open(os.path.join(self.sortida, "sitemap.xml"), "w", encoding="utf-8") as f:
             f.write("\n".join(files) + "\n")
 
+    def imatge_og(self, ruta, p):
+        """Comprova que la imatge OG local existeix i en llegeix la mida real (PNG, JPEG, WebP, GIF)."""
+        if not ruta:
+            return "", None
+        if ruta.startswith(("http://", "https://")):
+            return ruta, None
+        local = None
+        for base in (os.path.join(self.dir), os.path.join(self.dir_tema), os.path.join(ARREL_PLUGIN, "temes", "base")):
+            c = os.path.join(base, ruta.lstrip("/"))
+            if os.path.isfile(c):
+                local = c
+                break
+        if not local:
+            self.avisos.append(f"Imatge OG «{ruta}» no existeix (a {p['font']}): no la poso fins que hi sigui")
+            return "", None
+        return ruta, mida_imatge(local)
+
+    def robots_txt(self):
+        """robots.txt amb els rastrejadors d'IA explícits (veure scripts/bots_ia.py)."""
+        politica = self.cfg.get("bots_ia") or "permetre"
+        if politica not in bots_ia.POLITIQUES:
+            self.avisos.append(f"lloc.yaml: bots_ia «{politica}» no és vàlid ({', '.join(bots_ia.POLITIQUES)}); faig servir «permetre»")
+            politica = "permetre"
+        privades = [r if r.endswith("/") else r + "/" for r in (self.cfg.get("robots_bloquejar") or [])]
+        L = [f"# robots.txt · {self.cfg.get('nom', '')}", f"# Política de rastrejadors d'IA: {politica}", ""]
+        L += ["User-agent: *", "Allow: /"] + [f"Disallow: {r}" for r in privades] + [""]
+        # Cercadors i assistents: explícits, perquè quedi clar que poden entrar
+        for grup in ("cerca", "usuari"):
+            L.append("# Cerca (clàssica i amb IA)" if grup == "cerca" else "# Assistents a petició de l'usuari")
+            for b in bots_ia.BOTS[grup]:
+                L.append(f"User-agent: {b}")
+            L += ["Allow: /"] + [f"Disallow: {r}" for r in privades] + [""]
+        bloc = bots_ia.bloquejats(politica)
+        permesos = [x for x in bots_ia.BOTS["entrenament"] if x not in bloc]
+        if permesos:
+            L.append("# Entrenament de models (permès)")
+            L += [f"User-agent: {x}" for x in permesos] + ["Allow: /"] + [f"Disallow: {r}" for r in privades] + [""]
+        if bloc:
+            L.append("# Entrenament de models (bloquejat)")
+            L += [f"User-agent: {x}" for x in bloc] + ["Disallow: /", ""]
+        L.append(f"Sitemap: {self.absoluta('/sitemap.xml')}")
+        return "\n".join(L) + "\n"
+
     def extres(self):
         s = self.sortida
         with open(os.path.join(s, "robots.txt"), "w", encoding="utf-8") as f:
-            f.write(f"User-agent: *\nAllow: /\n\nSitemap: {self.absoluta('/sitemap.xml')}\n")
+            f.write(self.robots_txt())
         # llms.txt: resum per a cercadors amb IA
         linies = [f"# {self.cfg.get('nom')}", "", f"> {tr(self.cfg.get('descripcio'), self.idioma_defecte)}", ""]
         for idioma in self.idiomes:
