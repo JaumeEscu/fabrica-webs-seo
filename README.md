@@ -61,3 +61,37 @@ python3 scripts/construir.py exemples/demo
 python3 scripts/comprovar.py exemples/demo
 cd exemples/demo/web && python3 -m http.server 8000
 ```
+
+## Webs i eines d'interès
+
+Recull d'eines per auditar i seguir una web. Les marcades amb † vénen del *Curso gratis de SEO con IA* de BIG school (novembre 2026).
+
+### Oficials
+| Eina | Per a què |
+|---|---|
+| [Google Search Console](https://search.google.com/search-console) | Indexació, consultes, clics i impressions; enviar el sitemap |
+| [Bing Webmaster Tools](https://www.bing.com/webmasters) | El mateix per a Bing, que alimenta Copilot i part de ChatGPT |
+| [Rich Results Test](https://search.google.com/test/rich-results) | Validar les dades estructurades que Google pot fer servir |
+| [Schema Markup Validator](https://validator.schema.org/) | Validar qualsevol JSON-LD de Schema.org |
+| [PageSpeed Insights](https://pagespeed.web.dev/) | Core Web Vitals (LCP, CLS, INP) amb dades reals |
+| [Google Business Profile](https://www.google.com/business/) | Fitxa de negoci local |
+
+### Rastreig i IA
+| Eina | Per a què |
+|---|---|
+| [Common Crawl Index](https://index.commoncrawl.org/) † | Saber si el domini és al corpus d'entrenament de molts models (també ho fa `auditar_viu.py`) |
+| [Robots.txt Tester](https://technicalseo.com/tools/robots-txt/) † | Provar què pot rastrejar cada bot amb el robots.txt |
+| [WebMCP Inspector](https://carlosortega.page/herramientas/webmcp-inspector/) † | Veure i provar les eines WebMCP que ofereix una web als agents d'IA |
+
+### Auditoria ràpida
+| Eina | Per a què |
+|---|---|
+| [MicroAudit](https://auditoriaseo.thebigschool.com/) † | Primera revisió tècnica: 90 punts en 10 blocs. Detecta; no prioritza per negoci |
+| [Visual Schema](https://carlosortega.page/herramientas/visual-schema/) † | Visualitzar i validar les dades estructurades d'una URL o d'un codi |
+| [WPO Analyzer](https://carlosortega.page/herramientas/wpo-analyzer/) † | Recursos que alenteixen la pàgina (imatges pesades, scripts) |
+| [SEO Meta in 1 Click](https://chromewebstore.google.com/detail/seo-meta-in-1-click/bjogjfinolnhfhkbipphpdlldadpnmhc) † | Extensió de Chrome: title, description, encapçalaments, imatges i enllaços d'una pàgina |
+| [Social Share Preview](https://chromewebstore.google.com/detail/social-share-preview/ggnikicjfklimmffbkhknndafpdlabib) † | Extensió de Chrome: com es veu l'enllaç compartit (Open Graph) |
+
+### Proves manuals
+- `site:domini.com` a Google: quantes pàgines té indexades.
+- Pregunta de recomanació a ChatGPT, Gemini i al Mode IA de Google (detall a `skills/fabrica-seo/referencies/seo-ia.md`).
