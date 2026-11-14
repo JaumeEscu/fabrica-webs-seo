@@ -571,8 +571,8 @@ class Lloc:
         # llms.txt: resum per a cercadors amb IA
         linies = [f"# {self.cfg.get('nom')}", "", f"> {tr(self.cfg.get('descripcio'), self.idioma_defecte)}", ""]
         for idioma in self.idiomes:
-            linies.append(f"## Pàgines ({idioma})")
-            for p in self.pagines:
+            linies.append(f"## Pages ({idioma})")
+            for p in sorted(self.pagines, key=lambda x: (x["url"].count("/"), x["url"])):
                 if p["idioma"] == idioma and not p.get("noindex") and p.get("tipus") != "fitxa":
                     linies.append(f"- [{p.get('titol') or p.get('h1')}]({self.absoluta(p['url'])}): {p.get('descripcio', '')}")
             linies.append("")
@@ -586,11 +586,15 @@ class Lloc:
                         f'<link rel="canonical" href="{self.absoluta(desti)}"><meta name="robots" content="noindex">'
                         f'<title>{html.escape(self.cfg.get("nom", ""))}</title></head><body>'
                         + " · ".join(f'<a href="{self.ruta(i, "")}">{i}</a>' for i in self.idiomes) + "</body></html>")
+        # favicon.ico a l'arrel: els navegadors el demanen sempre a /favicon.ico
+        ico = os.path.join(s, "assets", "favicon.ico")
+        if os.path.exists(ico):
+            shutil.copy(ico, os.path.join(s, "favicon.ico"))
         plantilla = self.env.get_template("404.html")
         with open(os.path.join(s, "404.html"), "w", encoding="utf-8") as f:
             f.write(plantilla.render(lloc=self.cfg, idioma=self.idioma_defecte, inici=self.ruta(self.idioma_defecte, ""),
                                      menu=self.menu(self.cfg.get("menu"), self.idioma_defecte), peu=[], cta={}, any=dt.date.today().year,
-                                     p={"idioma": self.idioma_defecte}, titol="404", descripcio="", canonical="", alternatives=[],
+                                     p={"idioma": self.idioma_defecte, "noindex": True}, titol=self.cfg.get("titol_404") or "404", descripcio="", canonical="", alternatives=[],
                                      schema="{}", molles=[], idiomes=self.idiomes, altres_idiomes=[], og_imatge=""))
 
 
