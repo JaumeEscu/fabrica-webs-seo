@@ -99,6 +99,7 @@ class Analitzador(HTMLParser):
         self.jsonld, self.text, self.faq_visibles = [], [], 0
         self._pila, self._dins_script, self._buf = [], None, ""
         self._en_main = 0
+        self._en_svg = 0
 
     def handle_starttag(self, tag, attrs):
         a = dict(attrs)
@@ -132,9 +133,11 @@ class Analitzador(HTMLParser):
             self._dins_script = "js"
         elif tag == "main":
             self._en_main += 1
+        elif tag == "svg":
+            self._en_svg += 1
         elif tag == "details" and self._en_main:
             self.faq_visibles += 1
-        if tag == "title" or re.fullmatch(r"h[1-6]", tag):
+        if (tag == "title" and not self._en_svg and not self.titol) or re.fullmatch(r"h[1-6]", tag):
             self._pila.append(tag)
             self._buf = ""
 
@@ -145,6 +148,8 @@ class Analitzador(HTMLParser):
             self._dins_script, self._buf = None, ""
         elif tag == "main":
             self._en_main -= 1
+        elif tag == "svg":
+            self._en_svg -= 1
         if self._pila and tag == self._pila[-1]:
             t = self._pila.pop()
             text = re.sub(r"\s+", " ", self._buf).strip()
