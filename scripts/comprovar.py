@@ -92,11 +92,16 @@ def analitzar(dir_projecte):
     pagines = {}
     for arrel, _, fitxers in os.walk(web):
         for f in fitxers:
-            if f != "index.html" or arrel == web:
+            if f != "index.html":
                 continue
-            ruta = "/" + os.path.relpath(arrel, web).replace(os.sep, "/") + "/"
+            html = open(os.path.join(arrel, f), encoding="utf-8").read()
+            # L'arrel només se salta quan és la redirecció d'idioma (webs multiidioma);
+            # en webs d'un sol idioma és la portada i s'ha de revisar.
+            if arrel == web and ('http-equiv="refresh"' in html or 'name="robots" content="noindex"' in html):
+                continue
+            ruta = "/" if arrel == web else "/" + os.path.relpath(arrel, web).replace(os.sep, "/") + "/"
             a = Analitzador()
-            a.feed(open(os.path.join(arrel, f), encoding="utf-8").read())
+            a.feed(html)
             pagines[ruta] = a
     errors, avisos = defaultdict(list), defaultdict(list)
     titols, descs = defaultdict(list), defaultdict(list)
